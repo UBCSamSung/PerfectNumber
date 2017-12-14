@@ -22,7 +22,17 @@ class Speech {
 
     getUnexpected(action) {
         // Get NotImplemented message
-        return `${action} is not an unexpected action`
+        return `${action} is an unexpected action`
+    }
+
+    getUndefined(object) {
+        // Get NotImplemented message
+        return `${object} is not defined`
+    }
+
+    getWelcome() {
+        // Get Welcome message
+        return 'Welcome to _Perfect Number_!';
     }
 
     getExit() {
@@ -32,6 +42,21 @@ class Speech {
 
     getPrime() {
         return 'First prime number is 2';
+    }
+
+    getCorrectAnswer(answer) {
+        return `Awesome, ${answer} is right!`;
+    }
+
+    getWrongAnswer(guess, answer) {
+        return `Too bad, ${guess} is not right.\n${answer} is the answer.`;
+    }
+
+    getError(err=null) {
+        if (err) {
+            return `Error occured: ${err}`
+        }
+        return 'Unknown error occured';
     }
 }
 
