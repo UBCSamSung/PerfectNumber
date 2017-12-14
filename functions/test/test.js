@@ -12,7 +12,7 @@ describe('HTTPS', function () {
     describe('#get()', function () {
         it('should print city, latitude, longitutde to console', function (done) {
             const url =
-                "https://maps.googleapis.com/maps/api/geocode/json?address=a34a343434a";
+                "https://maps.googleapis.com/maps/api/geocode/json?address=Taipei";
             https.get(url, res => {
                 res.setEncoding("utf8");
                 let body = "";
@@ -31,9 +31,9 @@ describe('HTTPS', function () {
                         done(err)
                     }
                     const expected = {
-                        City: ' Florence, Metropolitan City of Florence, Italy -',
-                        Latitude: ' 43.7695604 -',
-                        Longitude: ' 11.2558136'
+                        City: ' Taipei, Taiwan -',
+                        Latitude: ' 25.0329694 -',
+                        Longitude: ' 121.5654177'
                     }
                     assert.deepEqual(result, expected);
                     done();
