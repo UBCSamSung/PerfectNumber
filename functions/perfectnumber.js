@@ -85,7 +85,22 @@ class PerfectNumber {
 
     getNextAnswer(mode, index) {
         // Get array of the given mode from database
-        return generateAnswers(null, index)[index];
+        const ref = this.db.child(mode);
+        let count = 0;
+        ref.set(generateAnswers(null, index))
+        .then(function(){
+            return 1;
+        })
+        .then(
+            function(res) {
+                count = res++;
+            },
+            function(err) {
+                count = 0
+            }
+        )
+        console.log(count);
+        return count;
     }
 
     ['input.unknown']() {
