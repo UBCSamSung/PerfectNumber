@@ -5,9 +5,22 @@ const app = require('actions-on-google').DialogflowApp;
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const Speech = require('./speech');
+const Number = require('./number');
 
 admin.initializeApp(functions.config().firebase);
+/**
+ * 
+ * 
+ * @class PerfectNumber
+ */
 class PerfectNumber {
+    /**
+     * Creates an instance of PerfectNumber.
+     * @param {any} req 
+     * @param {any} res 
+     * 
+     * @memberOf PerfectNumber
+     */
     constructor(req, res) {
         this.sessionId = req.body.sessionId;
         this.app = new app({ request: req, response: res });
@@ -21,6 +34,13 @@ class PerfectNumber {
         console.log(`Data: ${JSON.stringify(this.app.data)}`);
     }
 
+    /**
+     * 
+     * 
+     * @returns 
+     * 
+     * @memberOf PerfectNumber
+     */
     run() {
         const action = this.app.getIntent();
         const map = this;
@@ -33,6 +53,12 @@ class PerfectNumber {
         return this.app.ask(this.speech.getUnexpected(action));
     }
 
+    /**
+     * 
+     * 
+     * 
+     * @memberOf PerfectNumber
+     */
     ['write_db']() {
         const ref = this.db.child(this.sessionId);
         const data = this.data
@@ -52,6 +78,13 @@ class PerfectNumber {
         });
     }
 
+    /**
+     * 
+     * 
+     * @returns 
+     * 
+     * @memberOf PerfectNumber
+     */
     ['choose_game_mode']() {
         const mode = this.data.game_mode;
         if (!mode) {
@@ -66,6 +99,13 @@ class PerfectNumber {
         this.app.ask(`Next answer is ${nextAnswer}`);
     }
 
+    /**
+     * 
+     * 
+     * @returns 
+     * 
+     * @memberOf PerfectNumber
+     */
     ['guess']() {
         const mode = this.data.game_mode;
         const answer = this.data.next_answer;
@@ -83,35 +123,64 @@ class PerfectNumber {
         }
     }
 
+    /**
+     * 
+     * Get array of the given mode from database
+     * @param {str} mode 
+     * @param {int} index 
+     * @returns game mode array[index+1]
+     * 
+     * @memberOf PerfectNumber
+     */
     getNextAnswer(mode, index) {
-        // Get array of the given mode from database
         const ref = this.db.child(mode);
         let count = 0;
+        let array = null
+        array = generateAnswers(array)
         ref.set(generateAnswers(null, index))
-        .then(function(){
-            return 1;
-        })
-        .then(
-            function(res) {
+            .then(function () {
+                return 1;
+            })
+            .then(
+            function (res) {
                 count = res++;
             },
-            function(err) {
-                count = 0
-            }
-        )
+            function (err) {
+                return 0
+            })
         console.log(count);
-        return count;
+        return array[index];
     }
 
+    /**
+     * 
+     * 
+     * @returns 
+     * 
+     * @memberOf PerfectNumber
+     */
     ['input.unknown']() {
-        const action = this.app.getIntent();
-        return this.app.ask(this.speech.getNotImplemented(action));
+        return this.app.ask(this.speech.getFallback());
     }
 
+    /**
+     * 
+     * 
+     * @returns 
+     * 
+     * @memberOf PerfectNumber
+     */
     ['input.welcome']() {
         return this.app.ask(this.speech.getWelcome())
     }
 
+    /**
+     * 
+     * 
+     * @returns 
+     * 
+     * @memberOf PerfectNumber
+     */
     ['quit']() {
         this.app.setContext("in-game", 0);
         return this.app.ask(this.speech.getExit());
@@ -119,14 +188,3 @@ class PerfectNumber {
 }
 
 module.exports = PerfectNumber;
-
-function generateAnswers(data, index) {
-    // Generate data for the next 5 numbers if not exist
-    if (!data) data = []
-    if (!data[index]) {
-        for (let i = index; i < index + 5; i++) {
-            data.push(i);
-        }
-    }
-    return data
-}

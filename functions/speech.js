@@ -5,12 +5,12 @@ class Speech {
 
     getFallback() {
         // Get random fallback message
-        fallbackMessages = [
-            'fallback1',
-            'fallback2',
-            'fallback3'
+        const fallbackMessages = [
+            'I missed that. Try again',
+            'No valid command detected',
+            'What did you just said!?'
         ];
-        return(
+        return (
             getRandomItem(fallbackMessages)
         );
     }
@@ -32,7 +32,7 @@ class Speech {
 
     getWelcome() {
         // Get Welcome message
-        return 'Welcome to _Perfect Number_!';
+        return 'Welcome to Perfect Number!';
     }
 
     getExit() {
@@ -52,7 +52,7 @@ class Speech {
         return `Too bad, ${guess} is not right.\n${answer} is the answer.`;
     }
 
-    getError(err=null) {
+    getError(err = null) {
         if (err) {
             return `Error occured: ${err}`
         }
