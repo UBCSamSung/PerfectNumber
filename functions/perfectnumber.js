@@ -27,6 +27,7 @@ class PerfectNumber {
         this.data = this.app.data;
         this.db = admin.database().ref('/perfect-number');
         this.speech = new Speech();
+        this.number = new Number();
         // Log 
         console.log(`Headers: ${JSON.stringify(req.headers)}`);
         console.log(`Body: ${JSON.stringify(req.body)}`);
@@ -93,10 +94,16 @@ class PerfectNumber {
         this.app.setContext("in-game");
         // this.app.ask(`Preparing ${mode} counting game...`);
         const index = 0;
-        const nextAnswer = this.getNextAnswer(mode, index);
         this.data.index = index;
-        this.data.next_answer = nextAnswer;
-        this.app.ask(`Next answer is ${nextAnswer}`);
+        this.asynGetAnswer(mode, index).then(
+            (answer) => {
+                this.data.next_answer = answer;
+                this.app.ask(`Next answer is ${answer}`);
+            },
+            (err) => {
+                this.app.ask(this.speech.getError(err));
+            }
+        );
     }
 
     /**
@@ -132,24 +139,33 @@ class PerfectNumber {
      * 
      * @memberOf PerfectNumber
      */
-    getNextAnswer(mode, index) {
+    asynGetAnswer(mode, index) {
         const ref = this.db.child(mode);
-        let count = 0;
-        let array = null
-        array = generateAnswers(array)
-        ref.set(generateAnswers(null, index))
-            .then(function () {
-                return 1;
-            })
-            .then(
-            function (res) {
-                count = res++;
-            },
-            function (err) {
-                return 0
-            })
-        console.log(count);
-        return array[index];
+        const p = ref.once('value')
+        const p2 = p.then(
+            (snapshot) => {
+                const data = snapshot.val();
+                console.log(`Database value for ${mode} is ${data}`);
+                if (Array.isArray(data)) {
+                    return data;
+                } else {
+                    return [];
+                }
+            }, (error) => {
+                console.error(error);
+                this.app.ask(this.speech.getError(error));
+            }
+        );
+        return p2.then(
+            (array) => {
+                const newArray = this.number.generateAnswers(mode, array, index);
+                if (array.length!=newArray.length) {
+                    // write to database
+                    ref.set(newArray);
+                }
+                return newArray[index];
+            }
+        )
     }
 
     /**

@@ -10,16 +10,17 @@ class Number {
 
     generateAnswers(mode, array, index) {
         // Generate data until the next 5 numbers if array[index] does not exist
-        if (!array) array = []
-        if (!array[index]) {
-            for (let i = array.length; i <= index + 5; i++) {
+        const newArray = array.slice();
+        if (!newArray[index]) {
+            for (let i = newArray.length; i <= index + 5; i++) {
                 if (mode === 'integer') {
-                    array.push(i);
+                    newArray.push(i);
                 }
             }
         }
-        return array
+        return newArray
     }
+
     ['integer'](array) {
         for (let i = array[array.length];;i++) {
             array.forEach(item => {
