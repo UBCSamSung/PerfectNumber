@@ -28,7 +28,14 @@ class Speech {
 
   getWelcome () {
     // Get Welcome message
-    return 'Welcome to Perfect Number!'
+    const gameModes = [
+      'integer',
+      'square',
+      'cubic',
+      'prime',
+      'fibonacci'
+    ]
+    return `Welcome to Perfect Number!\nPlease choose from: ${gameModes}`
   }
 
   getExit () {
@@ -36,8 +43,8 @@ class Speech {
     return 'Alright, see you next time'
   }
 
-  getPrime () {
-    return 'First prime number is 2'
+  getStarted (answer) {
+    return `I will begin. First number is ${answer}.\nYour turn!`
   }
 
   getCorrectAnswer (answer) {

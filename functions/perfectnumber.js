@@ -9,6 +9,7 @@ const Sequence = require('./sequence')
 
 admin.initializeApp(functions.config().firebase)
 class PerfectNumber {
+  // Main class for core logic
   constructor (req, res) {
     this.app = new App({ request: req, response: res })
     this.data = this.app.data
@@ -43,7 +44,7 @@ class PerfectNumber {
     const index = 0
     this.answerManager.readAnswer(mode, index).then(
       (answer) => {
-        this.app.ask(`I will begin. First number is ${answer}.\nYour turn!`)
+        this.app.ask(this.speech.getStarted(answer))
         this.sessionManager.writeData('mode', mode)
         this.sessionManager.writeData('index', index + 1)
       },
@@ -61,7 +62,7 @@ class PerfectNumber {
           (index) => {
             this.answerManager.readAnswer(mode, index).then(
               (answer) => {
-                if (answer === guess) {
+                if (Number(answer) === Number(guess)) {
                   this.app.ask(this.speech.getCorrectAnswer(guess))
                   this.sessionManager.writeData('index', index + 1)
                 } else {
@@ -87,7 +88,7 @@ class PerfectNumber {
 
   ['quit'] () {
     this.app.setContext('in-game', 0)
-    return this.app.ask(this.speech.getExit())
+    return this.app.tell(this.speech.getExit())
   }
 }
 

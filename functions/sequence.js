@@ -10,6 +10,15 @@ class Sequence {
       case 'square':
         this.generator = new SquareGenerator(array)
         break
+      case 'cubic':
+        this.generator = new CubicGenerator(array)
+        break
+      case 'prime':
+        this.generator = new PrimeGenerator(array)
+        break
+      case 'fibonacci':
+        this.generator = new FibonacciGenerator(array)
+        break
       default:
         throw new Error('unimplemented sequence')
     }
@@ -71,6 +80,48 @@ class IntegerGenerator extends Generator {
 class SquareGenerator extends Generator {
   generateAnswer (index) {
     return Math.pow(index, 2)
+  }
+}
+
+class CubicGenerator extends Generator {
+  generateAnswer (index) {
+    return Math.pow(index, 3)
+  }
+}
+
+class PrimeGenerator extends Generator {
+  generateAnswer (index) {
+    function checkPrime (num, primes) {
+      let isPrime = true
+      primes.forEach(prime => {
+        if (num % prime === 0) {
+          isPrime = false
+        }
+        if (isPrime === false) {
+          return isPrime
+        }
+      })
+      return isPrime
+    }
+    const array = this.array
+    if (index === 0) {
+      return 2
+    }
+    for (let i = array[index - 1] + 1; ; i++) {
+      if (checkPrime(i, array)) {
+        return i
+      }
+    }
+  }
+}
+
+class FibonacciGenerator extends Generator {
+  generateAnswer (index) {
+    if (index < 2) {
+      return 1
+    }
+    const array = this.array
+    return array[index - 2] + array[index - 1]
   }
 }
 
