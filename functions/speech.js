@@ -52,7 +52,18 @@ class Speech {
   }
 
   getWrongAnswer (guess, answer) {
-    return `Too bad, ${guess} is not right.\n${answer} is the answer.`
+    const overshot = Number(guess) - Number(answer)
+    let hint = ''
+    let feedback = 'Close, but not quite.'
+    if (Math.abs(overshot) > 10) {
+      feedback = 'That\'s way off.'
+    }
+    if (overshot > 0) {
+      hint = 'too high'
+    } else {
+      hint = 'too low'
+    }
+    return `${feedback}, ${guess} is ${hint}.`
   }
 
   getError (err = null) {
